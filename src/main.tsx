@@ -3,10 +3,12 @@ import ReactDOM from "react-dom/client";
 import "./index.css";
 import { BrowserRouter } from "react-router-dom";
 import { router } from "./routerPage.tsx"
+import NavBar from "./components/NavBar.tsx";
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
     <BrowserRouter>
+    <NavBar />
     {router}
     </BrowserRouter>
   </React.StrictMode>

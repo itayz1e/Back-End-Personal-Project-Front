@@ -15,6 +15,7 @@ html {
 }
 
 body {
+  overflow: hidden;
   background-color: $base-bgcolor;
   color: $base-color;
   font: $base-font-weight #{$base-font-size}/#{$base-line-height} $base-font-family, $base-font-family-fallback;
@@ -26,7 +27,7 @@ body {
   align-items: center;
   display: flex;
   justify-content: center;
-  height: 100vh;
+  height: 90%;
 }
 
 .site {
@@ -99,7 +100,7 @@ a {
 }
 
 .login {
-  box-shadow: 0 0 250px #3b2b2b;
+  box-shadow: 0 0 250px #372724;
   text-align: center;
   padding: 4rem 2rem;
   width: 100%;

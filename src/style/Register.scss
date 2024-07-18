@@ -15,6 +15,7 @@ html {
 }
 
 body {
+  overflow: hidden;
   background-color: $base-bgcolor;
   color: $base-color;
   font: $base-font-weight #{$base-font-size}/#{$base-line-height}

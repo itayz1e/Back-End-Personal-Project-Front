@@ -1,18 +1,26 @@
-import { Link } from "react-router-dom";
-import "../style/Login.scss";
 import Logo from "../assets/svg/Logo";
+import "../style/ConnectingDB.scss"
 
-const Login = () => {
+
+const ConnectingDB = () => {
   return (
     <div className="align">
       <div className="grid align__item">
-        <div className="login">
+        <div className="connectingDB">
           <Logo />
-          <h2>Sign in</h2>
+          <h2>Connecting to a database</h2>
           <form className="form">
             <div className="form__field">
               <input
-                type="username"
+                type="text"
+                id="url"
+                placeholder="jdbc:postgresql://localhost:5432/postgres"
+                required
+              />
+            </div>
+            <div className="form__field">
+              <input
+                type="text"
                 id="username"
                 placeholder="Username"
                 required
@@ -26,17 +34,15 @@ const Login = () => {
                 required
               />
             </div>
+
             <div className="form__field">
-              <input type="submit" value="Sign in" />
+              <input type="submit" value="Connection" />
             </div>
           </form>
-          <p>
-            Not registered yet? <Link to={"/register"}>Register</Link>
-          </p>
         </div>
       </div>
     </div>
   );
 };
 
-export default Login;
+export default ConnectingDB;

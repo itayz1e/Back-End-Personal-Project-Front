@@ -1,0 +1,114 @@
+$register-bgcolor: #2c3e50;
+$register-color: #ecf0f1;
+$register-font-weight: 400;
+$register-font-size: 1rem;
+$register-line-height: 1.5;
+$register-font-family: Arial, sans-serif;
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  height: 100%;
+}
+
+body {
+  background-color: $register-bgcolor;
+  color: $register-color;
+  font: $register-font-weight #{$register-font-size}/#{$register-line-height} $register-font-family;
+  margin: 0;
+  min-height: 100%;
+}
+
+.align {
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  height: 100vh;
+}
+
+.site {
+  &__logo {
+    margin-bottom: 2rem;
+  }
+}
+
+$input-placeholder-color: #95a5a6;
+
+input {
+  border: 0;
+  font: inherit;
+
+  &::placeholder {
+    color: $input-placeholder-color;
+  }
+}
+
+.form {
+  &__field {
+    margin-bottom: 1rem;
+  }
+
+  input {
+    outline: 0;
+    padding: .5rem 1rem;
+
+    &[type="text"],
+    &[type="password"] {
+      width: 100%;
+    }
+  }
+}
+
+$grid-max-width: 30rem;
+$grid-width: 100%;
+
+.grid {
+  margin: 0 auto;
+  max-width: $grid-max-width;
+  width: $grid-width;
+}
+
+h2 {
+  font-size: 2.5rem;
+  font-weight: 300;
+  margin: 0 0 1rem;
+  text-transform: uppercase;
+  color: lighten($register-color, 20%);
+}
+
+svg {
+  height: auto;
+  max-width: 100%;
+  vertical-align: middle;
+}
+
+.connectingDB {
+  box-shadow: 0 0 250px #3b2b2b;
+  text-align: center;
+  padding: 3rem 2rem;
+  width: 100%;
+
+  input {
+    border: 1px solid #34495e;
+    border-radius: 999px;
+    background-color: #34495e;
+    text-align: center;
+    color: $register-color;
+
+    &[type="text"],
+    &[type="password"] {
+      background-repeat: no-repeat;
+      background-size: 1.5rem;
+      background-position: 1rem 50%;
+    }
+
+    &[type="submit"] {
+      background-image: linear-gradient(160deg, #8ceabb 0%, #378f7b 100%);
+      color: #fff;
+      margin-top: 1rem;
+      width: 100%;
+    }
+  }
+}
