@@ -20,6 +20,7 @@ const Logo = () => {
           stroke="#000"
         ></path>
         <text
+          dominantBaseline="middle"
           x="50%"
           y="50%"
           dominant-baseline="middle"
