@@ -3,6 +3,7 @@ import Logo from "../assets/svg/Logo";
 import "../style/Register.scss";
 
 import { register } from "../Service/authService";
+import { useNavigate } from "react-router-dom";
 
 const Register = () => {
   const [username, setUsername] = useState<string>("");
@@ -10,16 +11,18 @@ const Register = () => {
   const [password, setPassword] = useState<string>("");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
+  const navigate = useNavigate();
+
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     try {
       await register(email, username, password);
-      alert('Registration successful');
+      navigate('/login')
     } catch (err: any) {
       if (err.response && err.response.status === 409) {
-        setErrorMessage('Username or email already exists');
-      } else {
         setErrorMessage('An error occurred. Please try again.');
+      } else {
+        setErrorMessage('Username or email already exists');
       }
     }
   };
@@ -69,7 +72,7 @@ const Register = () => {
               <input className="button" type="submit" value="Register" />
             </div>
           </form>
-          {errorMessage && <p className="error">{errorMessage}</p>}
+          {errorMessage && <h3 className="error">{errorMessage}</h3>}
           <p>
             Already have an account? <a href="/login">Sign in</a>
           </p>

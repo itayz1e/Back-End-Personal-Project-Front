@@ -24,6 +24,10 @@ body {
   margin: 0;
   min-height: 100%;
 }
+.error{
+  color: rgba(10, 6, 6, 0.562);
+  border: 1px solid red;
+}
 
 .align {
   align-items: center;
