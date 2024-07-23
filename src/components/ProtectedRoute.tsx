@@ -14,4 +14,4 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ element }) => {
   return element;
 };
 
-export default ProtectedRoute;
+export default ProtectedRoute;

@@ -1,7 +1,31 @@
+import { useState } from "react";
+
 import "../style/App.scss";
 import Logo from "../assets/svg/Logo";
+import { askChatGPT } from "../Service/authService";
+
+interface Message {
+  type: "user" | "chatgpt";
+  content: string;
+  timestamp: string;
+}
 
 const App = () => {
+  const [userInput, setUserInput] = useState("");
+  const [messages, setMessages] = useState<Message[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async () => {
+    const userMessage: Message = {
+      type: "user",
+      content: userInput,
+      timestamp: new Date().toLocaleTimeString(),
+    };
+    setMessages((prevMessages) => [...prevMessages, userMessage]);
+    await askChatGPT(userInput, setLoading, setMessages);
+    setUserInput("");
+  };
+
   return (
     <div className="container clearfix">
       <div className="chat">
@@ -10,86 +34,35 @@ const App = () => {
         </div>
         <div className="chat-history">
           <ul>
-            <div className="clearfix">
-              <div className="message-data align-right">
-                <span className="message-data-time">10:10 AM, Today</span>{" "}
-                &nbsp; &nbsp;
-                <span className="message-data-name">Me</span>{" "}
-                <i className="fa fa-circle me"></i>
+            {messages.map((msg, index) => (
+              <div className="clearfix" key={index}>
+                <div
+                  className={`message-data align-${
+                    msg.type === "user" ? "right" : "left"
+                  }`}
+                >
+                  <span className="message-data-time">{msg.timestamp}</span>{" "}
+                  &nbsp; &nbsp;
+                  <span className="message-data-name">
+                    {msg.type === "user" ? "Me" : "ChatGPT"}
+                  </span>{" "}
+                  <i
+                    className={`fa fa-circle ${
+                      msg.type === "user" ? "me" : "online"
+                    }`}
+                  ></i>
+                </div>
+                <div
+                  className={`message ${
+                    msg.type === "user"
+                      ? "other-message float-right"
+                      : "my-message float-left"
+                  }`}
+                >
+                  {msg.content}
+                </div>
               </div>
-              <div className="message other-message float-right">
-                How many users do I have?
-              </div>
-            </div>
-            <div className="clearfix">
-              <div className="message-data align-left">
-                <span className="message-data-name">ChatGPT</span>{" "}
-                <i className="fa fa-circle online"></i>
-                <span className="message-data-time">10:11 AM, Today</span>{" "}
-                &nbsp; &nbsp;
-              </div>
-              <div className="message my-message float-left">[ 21 ]</div>
-            </div>
-            <div className="clearfix">
-              <div className="message-data align-right">
-                <span className="message-data-time">10:10 AM, Today</span>{" "}
-                &nbsp; &nbsp;
-                <span className="message-data-name">Me</span>{" "}
-                <i className="fa fa-circle me"></i>
-              </div>
-              <div className="message other-message float-right">
-                How many users do I have?
-              </div>
-            </div>
-            <div className="clearfix">
-              <div className="message-data align-left">
-                <span className="message-data-name">ChatGPT</span>{" "}
-                <i className="fa fa-circle online"></i>
-                <span className="message-data-time">10:11 AM, Today</span>{" "}
-                &nbsp; &nbsp;
-              </div>
-              <div className="message my-message float-left">[ 21 ]</div>
-            </div>
-            <div className="clearfix">
-              <div className="message-data align-right">
-                <span className="message-data-time">10:10 AM, Today</span>{" "}
-                &nbsp; &nbsp;
-                <span className="message-data-name">Me</span>{" "}
-                <i className="fa fa-circle me"></i>
-              </div>
-              <div className="message other-message float-right">
-                How many users do I have?
-              </div>
-            </div>
-            <div className="clearfix">
-              <div className="message-data align-left">
-                <span className="message-data-name">ChatGPT</span>{" "}
-                <i className="fa fa-circle online"></i>
-                <span className="message-data-time">10:11 AM, Today</span>{" "}
-                &nbsp; &nbsp;
-              </div>
-              <div className="message my-message float-left">[ 21 ]</div>
-            </div>
-            <div className="clearfix">
-              <div className="message-data align-right">
-                <span className="message-data-time">10:10 AM, Today</span>{" "}
-                &nbsp; &nbsp;
-                <span className="message-data-name">Me</span>{" "}
-                <i className="fa fa-circle me"></i>
-              </div>
-              <div className="message other-message float-right">
-                How many users do I have?
-              </div>
-            </div>
-            <div className="clearfix">
-              <div className="message-data align-left">
-                <span className="message-data-name">ChatGPT</span>{" "}
-                <i className="fa fa-circle online"></i>
-                <span className="message-data-time">10:11 AM, Today</span>{" "}
-                &nbsp; &nbsp;
-              </div>
-              <div className="message my-message float-left">[ 21 ]</div>
-            </div>
+            ))}
           </ul>
         </div>
         <div className="chat-message clearfix">
@@ -97,10 +70,12 @@ const App = () => {
             name="message-to-send"
             id="message-to-send"
             placeholder="Type your message"
+            value={userInput}
+            onChange={(e) => setUserInput(e.target.value)}
           ></textarea>
-          <i className="fa fa-file-o"></i> &nbsp;&nbsp;&nbsp;
-          <i className="fa fa-file-image-o"></i>
-          <button>Send</button>
+          <button onClick={handleSubmit} disabled={loading}>
+            {loading ? "Sending..." : "Send"}
+          </button>
         </div>
       </div>
     </div>

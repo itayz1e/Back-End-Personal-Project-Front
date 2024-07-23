@@ -1,25 +1,29 @@
-import axios from 'axios';
+import { serverApi } from "./api";
+
 
 export const login = async (username: string, password: string) => {
   try {
-    const response = await axios.post('http://localhost:8080/api/login', {
+    const response = await serverApi.post('http://localhost:8080/api/login', {
       username,
       password,
     });
-    return response.data.token
+    const { token } = response.data;
+    localStorage.setItem('authToken', token);
+    
+    return token;
   } catch (error: any) {
     if (error.response && error.response.status === 409) {
         throw new Error('Username already exists');
     }
     throw error;
-}
+  }
 };
 
 
 
 export const register = async (email: string, username: string, password: string) => {
     try {
-        const response = await axios.post('http://localhost:8080/api/register', {
+        const response = await serverApi.post('http://localhost:8080/api/register', {
             email,
             username,
             password
@@ -31,6 +35,47 @@ export const register = async (email: string, username: string, password: string
         }
         throw error;
    }
+};
+
+
+
+export interface Message {
+  type: 'user' | 'chatgpt';
+  content: string;
+  timestamp: string;
+}
+
+export const askChatGPT = async (userInput: string, setLoading: React.Dispatch<React.SetStateAction<boolean>>, setMessages: React.Dispatch<React.SetStateAction<Message[]>>) => {
+  try {
+    const token = localStorage.getItem('authToken');
+    if (!token) {
+      throw new Error('No token found');
+    }
+
+    const response = await serverApi.get('http://localhost:8080/Ask/askChatGPT', {
+      params: { userInput },
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+
+    const chatGPTMessage: Message = {
+      type: 'chatgpt',
+      content: response.data,
+      timestamp: new Date().toLocaleTimeString()
+    };
+
+    setMessages(prevMessages => [...prevMessages, chatGPTMessage]);
+  } catch (error: any) {
+    console.error("Error fetching data:", error);
+    const errorMessage: Message = {
+      type: 'chatgpt',
+      content: "An error occurred while fetching data.",
+      timestamp: new Date().toLocaleTimeString()
+    };
+    setMessages(prevMessages => [...prevMessages, errorMessage]);
+  }
+  setLoading(false);
 };
 
 
