@@ -16,7 +16,7 @@ const Login = () => {
     try {
       const response = await login(username, password);
       const token = response;
-      setTokenWithExpiry(token, 10000);
+      setTokenWithExpiry(token, 3600000);
       navigate("/");
     } catch (err: any) {
       if (err.response && err.response.status === 409) {
