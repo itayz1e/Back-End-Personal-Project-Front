@@ -2,7 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import "../style/Login.scss";
 import Logo from "../assets/svg/Logo";
 import { useState } from "react";
-import { login, setTokenWithExpiry } from "../Service/authService";
+import { isTokenValid, login, setTokenWithExpiry } from "../Service/authService";
 
 const Login = () => {
   const [username, setUsername] = useState("");
@@ -17,7 +17,12 @@ const Login = () => {
       const response = await login(username, password);
       const token = response;
       setTokenWithExpiry(token, 3600000);
-      navigate("/");
+      const dbToken = localStorage.getItem('dbToken');
+      if (dbToken && isTokenValid()) {
+        navigate("/");
+      } else {
+        navigate("/ConnectingDB");
+      }
     } catch (err: any) {
       if (err.response && err.response.status === 409) {
         setErrorMessage("An error occurred. Please try again.");

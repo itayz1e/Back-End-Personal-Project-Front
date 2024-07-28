@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import axios from "axios";
 import Logo from "../assets/svg/Logo";
 import "../style/ConnectingDB.scss";
+import { connectToDatabase } from "../Service/authService";
+import { useNavigate } from "react-router-dom";
 
 const ConnectingDB = () => {
   const [url, setUrl] = useState("");
@@ -10,32 +12,28 @@ const ConnectingDB = () => {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
 
+  const navigate = useNavigate();
+
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setMessage("");
-  
+
     try {
       const token = localStorage.getItem('authToken');
       if (!token) {
         throw new Error('No token found');
       }
       
-      const response = await axios.post(
-        "http://localhost:8080/api/connect-db",
-        {
-          url,
-          username,
-          password
-        },
-        {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          },
-        }
-      );
-  
+      const response = await connectToDatabase(url, username, password, token);
       setMessage(response.data.message);
+      setPassword('');
+      setUsername('');
+      setUrl('');
+      setTimeout(() => {
+        navigate("/");
+      }, 3000);
     } catch (error) {
       console.error("Error connecting to database:", error);
       setMessage("Failed to connect to the database.");
@@ -55,7 +53,7 @@ const ConnectingDB = () => {
               <input
                 type="text"
                 id="url"
-                placeholder="jdbc:postgresql://localhost:5432/postgres"
+                placeholder="Url"
                 value={url}
                 onChange={(e) => setUrl(e.target.value)}
                 required

@@ -107,3 +107,52 @@ export const logout = () => {
   localStorage.removeItem('user');
   localStorage.removeItem('authToken');
 };
+
+
+export const connectToDatabase = async (url: string, username: string, password: string, token: string) => {
+  try {
+    const response = await serverApi.post(
+      "http://localhost:8080/api/connect-db",
+      {
+        url,
+        username,
+        password
+      },
+      {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        },
+      }
+    );
+    const dbToken = response.data.token;
+
+    if (dbToken) {
+      const expiryDate = new Date();
+      expiryDate.setDate(expiryDate.getDate() + 3);
+      const tokenData = {
+        token: dbToken,
+        expiry: expiryDate.toISOString(),
+      };
+
+      localStorage.setItem('dbToken', JSON.stringify(tokenData));
+    }
+    return response;
+  } catch (error) {
+    throw new Error(`Error connecting to database`);
+  }
+};
+
+
+export const isTokenValid = (): boolean => {
+  const tokenData = localStorage.getItem('dbToken');
+  
+  if (!tokenData) {
+    return false;
+  }
+
+  const { token, expiry } = JSON.parse(tokenData);
+  const currentDate = new Date();
+  const expiryDate = new Date(expiry);
+
+  return currentDate < expiryDate;
+};
