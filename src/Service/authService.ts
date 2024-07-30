@@ -86,21 +86,52 @@ export const setTokenWithExpiry = (token: string, expiry: number) => {
 };
 
 
-export const getToken = () => {
+interface TokenData {
+  token: string;
+  expiry: number;
+}
+
+export const getTokens = (): { token: string | null; dbToken: string | null } | null => {
   const itemStr = localStorage.getItem('user');
-  if (!itemStr) return null;
-  const item = JSON.parse(itemStr);
-  const now = new Date();
-  if (now.getTime() > item.expiry) {
+  const itemSec = localStorage.getItem('dbToken');
+
+  if (!itemStr && !itemSec) return null;
+
+  let item1: TokenData | null = null;
+  let item2: TokenData | null = null;
+
+  try {
+    if (itemStr) {
+      item1 = JSON.parse(itemStr);
+    }
+    if (itemSec) {
+      item2 = JSON.parse(itemSec);
+    }
+  } catch (e) {
+    console.error('Failed to parse tokens from localStorage:', e);
     localStorage.removeItem('user');
+    localStorage.removeItem('dbToken');
     return null;
   }
-  return item.token;
+
+  const now = new Date().getTime();
+  if ((item1 && now > item1.expiry) || (item2 && now > item2.expiry)) {
+    localStorage.removeItem('user');
+    localStorage.removeItem('dbToken');
+    return null;
+  }
+
+  return {
+    token: item1 ? item1.token : null,
+    dbToken: item2 ? item2.token : null,
+  };
 };
 
-export const isAuthenticated = () => {
-  return getToken() != null;
+export const isAuthenticated = (): boolean => {
+  const tokens = getTokens();
+  return tokens !== null && tokens.token !== null && tokens.dbToken !== null;
 };
+
 
 
 export const logout = () => {
@@ -124,6 +155,7 @@ export const connectToDatabase = async (url: string, username: string, password:
         },
       }
     );
+    
     const dbToken = response.data.token;
 
     if (dbToken) {
@@ -150,7 +182,7 @@ export const isTokenValid = (): boolean => {
     return false;
   }
 
-  const { token, expiry } = JSON.parse(tokenData);
+  const { expiry } = JSON.parse(tokenData);
   const currentDate = new Date();
   const expiryDate = new Date(expiry);
 
