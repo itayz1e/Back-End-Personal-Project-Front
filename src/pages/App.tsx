@@ -16,6 +16,7 @@ const App = () => {
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async () => {
+    setLoading(true);
     const userMessage: Message = {
       type: "user",
       content: userInput,
@@ -60,6 +61,11 @@ const App = () => {
                   }`}
                 >
                   {msg.content}
+                  {loading && msg && (
+                    <div className="loading-indicator">
+                      <i className="fa fa-spinner fa-spin"></i> Loading...
+                    </div>
+                  )}
                 </div>
               </div>
             ))}

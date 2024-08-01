@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import axios from "axios";
 import Logo from "../assets/svg/Logo";
 import "../style/ConnectingDB.scss";
 import { connectToDatabase } from "../Service/authService";
