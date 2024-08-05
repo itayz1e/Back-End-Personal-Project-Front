@@ -5,10 +5,14 @@ import "../style/Register.scss";
 import { register } from "../Service/authService";
 import { useNavigate } from "react-router-dom";
 
+
 const Register = () => {
   const [username, setUsername] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+  const [url, setUrl] = useState<string>("");
+  const [usernameDB, setUsernameDB] = useState<string>("");
+  const [passwordDB, setPasswordDB] = useState<string>("");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const navigate = useNavigate();
@@ -16,14 +20,10 @@ const Register = () => {
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     try {
-      await register(email, username, password);
+      await register(username, email, password, url, usernameDB, passwordDB);
       navigate('/login')
     } catch (err: any) {
-      if (err.response && err.response.status === 409) {
-        setErrorMessage('An error occurred. Please try again.');
-      } else {
-        setErrorMessage('Username or email already exists');
-      }
+      setErrorMessage('Username or email already exists');
     }
   };
 
@@ -66,6 +66,39 @@ const Register = () => {
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+              />
+            </div>
+            <div className="form__field">
+              <label htmlFor="url">Url-DB</label>
+              <input
+                type="url"
+                id="url"
+                placeholder="jdbc:postgresql://???.???.com:???/???"
+                required
+                value={url}
+                onChange={(e) => setUrl(e.target.value)}
+              />
+            </div>
+            <div className="form__field">
+              <label htmlFor="usernameDB">Username DB</label>
+              <input
+                type="usernameDB"
+                id="usernameDB"
+                placeholder="usernameDB"
+                required
+                value={usernameDB}
+                onChange={(e) => setUsernameDB(e.target.value)}
+              />
+            </div>
+            <div className="form__field">
+              <label htmlFor="passwordDB">Password DB</label>
+              <input
+                type="passwordDB"
+                id="passwordDB"
+                placeholder="••••••••••••"
+                required
+                value={passwordDB}
+                onChange={(e) => setPasswordDB(e.target.value)}
               />
             </div>
             <div className="form__field">
