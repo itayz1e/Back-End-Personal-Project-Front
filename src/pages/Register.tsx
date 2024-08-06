@@ -1,10 +1,9 @@
 import { useState } from "react";
 import Logo from "../assets/svg/Logo";
 import "../style/Register.scss";
-
 import { register } from "../Service/authService";
 import { useNavigate } from "react-router-dom";
-
+import { RegisterRequest } from "../Service/helper";
 
 const Register = () => {
   const [username, setUsername] = useState<string>("");
@@ -19,14 +18,23 @@ const Register = () => {
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
+    
+    const requestData: RegisterRequest = {
+      username,
+      email,
+      password,
+      url,
+      usernameDB,
+      passwordDB,
+    };
+
     try {
-      await register(username, email, password, url, usernameDB, passwordDB);
-      navigate('/login')
+      await register(requestData);
+      navigate('/login');
     } catch (err: any) {
       setErrorMessage('Username or email already exists');
     }
   };
-
 
   return (
     <div className="align">
@@ -69,7 +77,7 @@ const Register = () => {
               />
             </div>
             <div className="form__field">
-              <label htmlFor="url">Url-DB</label>
+              <label htmlFor="url">URL-DB</label>
               <input
                 type="url"
                 id="url"
@@ -82,7 +90,7 @@ const Register = () => {
             <div className="form__field">
               <label htmlFor="usernameDB">Username DB</label>
               <input
-                type="usernameDB"
+                type="text"
                 id="usernameDB"
                 placeholder="usernameDB"
                 required
@@ -93,7 +101,7 @@ const Register = () => {
             <div className="form__field">
               <label htmlFor="passwordDB">Password DB</label>
               <input
-                type="passwordDB"
+                type="password"
                 id="passwordDB"
                 placeholder="••••••••••••"
                 required

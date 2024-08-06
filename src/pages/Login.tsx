@@ -2,32 +2,37 @@ import { Link, useNavigate } from "react-router-dom";
 import "../style/Login.scss";
 import Logo from "../assets/svg/Logo";
 import { useState } from "react";
-import { isTokenValid, login, setTokenWithExpiry } from "../Service/authService";
+import { isTokenValid, login, logout, setTokenWithExpiry } from "../Service/authService";
+import { LoginRequest } from "../Service/helper";
+
+
 
 const Login = () => {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+  const [username, setUsername] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const navigate = useNavigate();
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
+    const requestData: LoginRequest = {
+      username,
+      password,
+    };
     try {
-      const response = await login(username, password);
-      const token = response;
-      setTokenWithExpiry(token, 3600000);
-      const dbToken = localStorage.getItem('dbToken');
-      if (dbToken && isTokenValid()) {
+      const token = await login(requestData);
+      setTokenWithExpiry(token, 86400000);
+      if (isTokenValid()) {
         navigate("/");
       } else {
-        navigate("/ConnectingDB");
+        logout();
       }
     } catch (err: any) {
       if (err.response && err.response.status === 409) {
         setErrorMessage("An error occurred. Please try again.");
       } else {
-        setErrorMessage("Username or Password ar not valid.");
+        setErrorMessage("Username or Password are not valid.");
       }
     }
   };

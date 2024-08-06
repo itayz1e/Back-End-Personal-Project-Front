@@ -1,14 +1,12 @@
 import { serverApi } from "./api";
+import { LoginRequest, RegisterRequest } from "./helper";
 
-export const login = async (username: string, password: string) => {
+
+
+export const login = async (data: LoginRequest): Promise<string> => {
   try {
-    const response = await serverApi.post("http://localhost:8080/api/login", {
-      username,
-      password,
-    });
+    const response = await serverApi.post("http://localhost:8080/api/login", data);
     const { token } = response.data;
-    localStorage.setItem("authToken", token);
-
     return token;
   } catch (error: any) {
     if (error.response && error.response.status === 409) {
@@ -18,25 +16,11 @@ export const login = async (username: string, password: string) => {
   }
 };
 
-export const register = async (
-  username: string,
-  email: string,
-  password: string,
-  url: string,
-  usernameDB: string,
-  passwordDB: string
-) => {
+export const register = async (data: RegisterRequest) => {
   try {
     const response = await serverApi.post(
       "http://localhost:8080/api/register",
-      {
-        username,
-        password,
-        email,
-        url,
-        passwordDB,
-        usernameDB,
-      }
+      data
     );
     return response.data;
   } catch (error: any) {
@@ -97,60 +81,36 @@ export const setTokenWithExpiry = (token: string, expiry: number) => {
   const now = new Date();
   const item = { token, expiry: now.getTime() + expiry };
   localStorage.setItem("user", JSON.stringify(item));
+  
+  setTimeout(() => {
+    localStorage.removeItem("user");
+    logout();
+  }, expiry);
 };
 
-interface TokenData {
-  token: string;
-  expiry: number;
-}
-
-export const getTokens = (): {
-  token: string | null;
-  dbToken: string | null;
-} | null => {
-  const itemStr = localStorage.getItem("user");
-  const itemSec = localStorage.getItem("dbToken");
-
-  if (!itemStr && !itemSec) return null;
-
-  let item1: TokenData | null = null;
-  let item2: TokenData | null = null;
-
+export const getToken = () => {
   try {
-    if (itemStr) {
-      item1 = JSON.parse(itemStr);
-    }
-    if (itemSec) {
-      item2 = JSON.parse(itemSec);
-    }
-  } catch (e) {
-    console.error("Failed to parse tokens from localStorage:", e);
-    localStorage.removeItem("user");
-    localStorage.removeItem("dbToken");
-    return null;
-  }
+    const tokenUser = localStorage.getItem("user");
+ 
+    if (tokenUser) {
+      const item = JSON.parse(tokenUser);
+      const now = new Date().getTime();
 
-  const now = new Date().getTime();
-  if ((item1 && now > item1.expiry) || (item2 && now > item2.expiry)) {
-    localStorage.removeItem("user");
-    localStorage.removeItem("dbToken");
-    return null;
+      if (now < item.expiry) {
+        return item.token;
+      } else {
+        localStorage.removeItem("user");
+      }
+    }
+  } catch (error) {
+    console.error("Failed to parse token from localStorage:", error);
   }
-
-  return {
-    token: item1 ? item1.token : null,
-    dbToken: item2 ? item2.token : null,
-  };
+  return null;
 };
 
-export const isAuthenticated = (): boolean => {
-  const tokens = getTokens();
-  return tokens !== null && tokens.token !== null && tokens.dbToken !== null;
-};
 
 export const logout = () => {
   localStorage.removeItem("user");
-  localStorage.removeItem("authToken");
 };
 
 export const connectToDatabase = async (
@@ -193,7 +153,7 @@ export const connectToDatabase = async (
 };
 
 export const isTokenValid = (): boolean => {
-  const tokenData = localStorage.getItem("dbToken");
+  const tokenData = localStorage.getItem("user");
 
   if (!tokenData) {
     return false;
