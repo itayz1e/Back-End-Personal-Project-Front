@@ -8,7 +8,10 @@ export interface LoginRequest {
     username: string;
     email: string;
     password: string;
+  }
+
+  export interface ConnectingDBRequest {
     url: string;
-    usernameDB: string;
-    passwordDB: string;
+    username: string;
+    password: string;
   }

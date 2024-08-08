@@ -1,5 +1,5 @@
 import { serverApi } from "./api";
-import { LoginRequest, RegisterRequest } from "./helper";
+import { LoginRequest, RegisterRequest } from "./interface";
 
 
 
@@ -81,7 +81,7 @@ export const setTokenWithExpiry = (token: string, expiry: number) => {
   const now = new Date();
   const item = { token, expiry: now.getTime() + expiry };
   localStorage.setItem("user", JSON.stringify(item));
-  
+
   setTimeout(() => {
     localStorage.removeItem("user");
     logout();
@@ -91,7 +91,7 @@ export const setTokenWithExpiry = (token: string, expiry: number) => {
 export const getToken = () => {
   try {
     const tokenUser = localStorage.getItem("user");
- 
+
     if (tokenUser) {
       const item = JSON.parse(tokenUser);
       const now = new Date().getTime();

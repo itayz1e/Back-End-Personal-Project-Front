@@ -3,7 +3,7 @@ import "../style/Login.scss";
 import Logo from "../assets/svg/Logo";
 import { useState } from "react";
 import { isTokenValid, login, logout, setTokenWithExpiry } from "../Service/authService";
-import { LoginRequest } from "../Service/helper";
+import { LoginRequest } from "../Service/interface";
 
 
 

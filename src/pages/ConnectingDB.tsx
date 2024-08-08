@@ -1,43 +1,44 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import Logo from "../assets/svg/Logo";
 import "../style/ConnectingDB.scss";
-import { connectToDatabase } from "../Service/authService";
+import { connectToDatabase, getToken } from "../Service/authService";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { ConnectingDBRequest } from "../Service/interface";
 
 const ConnectingDB = () => {
-  const [url, setUrl] = useState("");
   const [username, setUsername] = useState("");
+  const [url, setUrl] = useState("");
   const [password, setPassword] = useState("");
+  const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState("");
 
   const navigate = useNavigate();
 
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setMessage("");
-
+  const handleSubmit = async (event: any) => {
+    event.preventDefault();
     try {
-      const token = localStorage.getItem('authToken');
-      if (!token) {
-        throw new Error('No token found');
-      }
-      
-      const response = await connectToDatabase(url, username, password, token);
-      setMessage(response.data.message);
-      setPassword('');
-      setUsername('');
-      setUrl('');
-      setTimeout(() => {
-        navigate("/");
-      }, 3000);
-    } catch (error) {
-      console.error("Error connecting to database:", error);
-      setMessage("Failed to connect to the database.");
-    } finally {
+      // setLoading(true);
+      const token = getToken(); // קבלת ה-token מה-localStorage
+      const response = await axios.post(
+        "http://localhost:8080/connect-db",
+        {
+          url: url, // Ensure this URL includes a '/'
+          username: username,
+          password: password
+        },
+        {
+          headers: {
+            Authorization: token ? `Bearer ${token}` : "", // הוספת ה-token אם קיים
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      console.log(response.data, "response to ConnectingDB");
+      setResult(response.data);
       setLoading(false);
+    } catch (error) {
+      console.error("Error connecting to the database:", error);
     }
   };
 
@@ -82,7 +83,7 @@ const ConnectingDB = () => {
             <div className="form__field">
               <input type="submit" value="Connect" disabled={loading} />
             </div>
-            {message && <div className="form__message">{message}</div>}
+            {/* {result && <pre>{JSON.stringify(result, null, 2)}</pre>} */}
           </form>
         </div>
       </div>
