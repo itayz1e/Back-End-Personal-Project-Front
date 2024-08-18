@@ -18,23 +18,24 @@ const ConnectingDB = () => {
   const handleSubmit = async (event: any) => {
     event.preventDefault();
     try {
-      // setLoading(true);
-      const token = getToken(); // קבלת ה-token מה-localStorage
+      setLoading(true);
+      const token = getToken();
       const response = await axios.post(
         "http://localhost:8080/connect-db",
         {
-          url: url, // Ensure this URL includes a '/'
+          url: url,
           username: username,
-          password: password
+          password: password,
         },
         {
           headers: {
-            Authorization: token ? `Bearer ${token}` : "", // הוספת ה-token אם קיים
+            Authorization: token ? `Bearer ${token}` : "",
             "Content-Type": "application/json",
           },
         }
       );
-      console.log(response.data, "response to ConnectingDB");
+      setLoading(false);
+      // navigate("/");
       setResult(response.data);
       setLoading(false);
     } catch (error) {
@@ -81,9 +82,13 @@ const ConnectingDB = () => {
             </div>
 
             <div className="form__field">
-              <input type="submit" value="Connect" disabled={loading} />
+              <input
+                type="submit"
+                value={loading ? "Connecting..." : "Connect"}
+                disabled={loading}
+                className={loading ? "loading" : ""}
+              />
             </div>
-            {/* {result && <pre>{JSON.stringify(result, null, 2)}</pre>} */}
           </form>
         </div>
       </div>
