@@ -43,7 +43,7 @@ export const askChatGPT = async (
   setMessages: React.Dispatch<React.SetStateAction<Message[]>>
 ) => {
   try {
-    const token = localStorage.getItem("authToken");
+    const token = getToken();
     if (!token) {
       throw new Error("No token found");
     }
@@ -53,7 +53,8 @@ export const askChatGPT = async (
       {
         params: { userInput },
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: token ? `Bearer ${token}` : "",
+          "Content-Type": "application/json",
         },
       }
     );
@@ -63,19 +64,16 @@ export const askChatGPT = async (
       content: response.data,
       timestamp: new Date().toLocaleTimeString(),
     };
-
     setMessages((prevMessages) => [...prevMessages, chatGPTMessage]);
+
   } catch (error: any) {
     console.error("Error fetching data:", error);
-    const errorMessage: Message = {
-      type: "chatgpt",
-      content: "An error occurred while fetching data.",
-      timestamp: new Date().toLocaleTimeString(),
-    };
-    setMessages((prevMessages) => [...prevMessages, errorMessage]);
+  } finally {
+    setLoading(false); // בצע עדכון לסטטוס טעינה גם במקרה של שגיאה
   }
-  setLoading(false);
 };
+
+
 
 export const setTokenWithExpiry = (token: string, expiry: number) => {
   const now = new Date();

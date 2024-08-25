@@ -1,10 +1,9 @@
 import { useState } from "react";
 import Logo from "../assets/svg/Logo";
 import "../style/ConnectingDB.scss";
-import { connectToDatabase, getToken } from "../Service/authService";
+import { getToken } from "../Service/authService";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
-import { ConnectingDBRequest } from "../Service/interface";
+import { serverApi } from "../Service/api";
 
 const ConnectingDB = () => {
   const [username, setUsername] = useState("");
@@ -20,7 +19,7 @@ const ConnectingDB = () => {
     try {
       setLoading(true);
       const token = getToken();
-      const response = await axios.post(
+      const response = await serverApi.post(
         "http://localhost:8080/connect-db",
         {
           url: url,
@@ -34,7 +33,7 @@ const ConnectingDB = () => {
           },
         }
       );
-      setLoading(false);
+        setLoading(false);
       // navigate("/");
       setResult(response.data);
       setLoading(false);
@@ -90,6 +89,7 @@ const ConnectingDB = () => {
               />
             </div>
           </form>
+          {result && <h3 className="message">{result}</h3>}
         </div>
       </div>
     </div>
