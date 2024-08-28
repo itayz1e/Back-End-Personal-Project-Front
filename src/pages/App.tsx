@@ -1,5 +1,4 @@
-import { useState } from "react";
-
+import { useState, useEffect, useRef } from "react";
 import "../style/App.scss";
 import Logo from "../assets/svg/Logo";
 import { askChatGPT } from "../Service/authService";
@@ -14,6 +13,8 @@ const App = () => {
   const [userInput, setUserInput] = useState("");
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(false);
+  const chatHistoryRef = useRef<HTMLDivElement>(null); // הפנייה ל-div של ההודעות
+  const lastMessageRef = useRef<HTMLDivElement>(null); // הפנייה להודעה האחרונה
 
   const handleSubmit = async () => {
     setLoading(true);
@@ -27,16 +28,38 @@ const App = () => {
     setUserInput("");
   };
 
+  useEffect(() => {
+    // גלילה לתחילת ההודעה האחרונה
+    if (lastMessageRef.current && chatHistoryRef.current) {
+      const chatContainer = chatHistoryRef.current;
+      const lastMessageElement = lastMessageRef.current;
+
+      // חישוב מיקום ההודעה האחרונה
+      const topPosition = lastMessageElement.offsetTop;
+      const containerHeight = chatContainer.clientHeight;
+
+      // גלילה לתחילת ההודעה האחרונה
+      chatContainer.scrollTo({
+        top: topPosition - (containerHeight / 2),
+        behavior: 'smooth',
+      });
+    }
+  }, [messages]); // התגובה תתרחש כל פעם שיתווספו הודעות חדשות
+
   return (
     <div className="container clearfix">
       <div className="chat">
         <div className="chat-header">
           <Logo />
         </div>
-        <div className="chat-history">
+        <div className="chat-history" ref={chatHistoryRef}>
           <ul>
             {messages.map((msg, index) => (
-              <div className="clearfix" key={index}>
+              <div
+                className="clearfix"
+                key={index}
+                ref={index === messages.length - 1 ? lastMessageRef : null} // הגדרת הפנייה להודעה האחרונה
+              >
                 <div
                   className={`message-data align-${
                     msg.type === "user" ? "right" : "left"
