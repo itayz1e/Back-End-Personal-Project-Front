@@ -58,7 +58,6 @@ export const askChatGPT = async (
         },
       }
     );
-
     const chatGPTMessage: Message = {
       type: "chatgpt",
       content: response.data,

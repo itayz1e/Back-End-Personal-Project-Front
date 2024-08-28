@@ -36,7 +36,6 @@ const ConnectingDB = () => {
           },
         }
       );
-      console.log(response,"response");
       setResult(response.data);
       setLoading(false);
       // navigate("/");
