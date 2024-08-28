@@ -10,14 +10,17 @@ const ConnectingDB = () => {
   const [url, setUrl] = useState("");
   const [password, setPassword] = useState("");
   const [result, setResult] = useState(null);
+  const [error, setError] = useState(""); // State for error messages
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
 
-  const handleSubmit = async (event: any) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     try {
       setLoading(true);
+      setError("");
+      setResult(null)
       const token = getToken();
       const response = await serverApi.post(
         "http://localhost:8080/connect-db",
@@ -33,12 +36,14 @@ const ConnectingDB = () => {
           },
         }
       );
-        setLoading(false);
-      // navigate("/");
+      console.log(response,"response");
       setResult(response.data);
       setLoading(false);
-    } catch (error) {
+      // navigate("/");
+    } catch (error: any) {
       console.error("Error connecting to the database:", error);
+      setError("Error connecting to the database. Please try again."); // Display error message
+      setLoading(false);
     }
   };
 
@@ -90,6 +95,7 @@ const ConnectingDB = () => {
             </div>
           </form>
           {result && <h3 className="message">{result}</h3>}
+          {error && <h3 className="error">{error}</h3>}
         </div>
       </div>
     </div>
