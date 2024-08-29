@@ -5,8 +5,6 @@ import { useState } from "react";
 import { isTokenValid, login, logout, setTokenWithExpiry } from "../Service/authService";
 import { LoginRequest } from "../Service/interface";
 
-
-
 const Login = () => {
   const [username, setUsername] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -23,10 +21,18 @@ const Login = () => {
     try {
       const token = await login(requestData);
       setTokenWithExpiry(token, 86400000);
+
       if (isTokenValid()) {
-        navigate("/");
+
+        const dbConnected = localStorage.getItem('dbConnected');
+        if (dbConnected === 'true') {
+          navigate("/");
+        } else {
+          navigate("/ConnectingDB");
+        }
       } else {
         logout();
+        setErrorMessage("Session is invalid. Please log in again.");
       }
     } catch (err: any) {
       if (err.response && err.response.status === 409) {
@@ -46,7 +52,7 @@ const Login = () => {
           <form className="form" onSubmit={handleSubmit}>
             <div className="form__field">
               <input
-                type="username"
+                type="text"
                 id="username"
                 placeholder="Username"
                 required

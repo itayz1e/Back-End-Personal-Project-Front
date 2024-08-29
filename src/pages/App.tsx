@@ -13,11 +13,22 @@ const App = () => {
   const [userInput, setUserInput] = useState("");
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState(false);
-  const chatHistoryRef = useRef<HTMLDivElement>(null); // הפנייה ל-div של ההודעות
-  const lastMessageRef = useRef<HTMLDivElement>(null); // הפנייה להודעה האחרונה
+  const [error, setError] = useState<string | null>(null);
+  const chatHistoryRef = useRef<HTMLDivElement>(null);
+  const lastMessageRef = useRef<HTMLDivElement>(null);
 
   const handleSubmit = async () => {
+
+    const dbConnected = localStorage.getItem('dbConnected');
+    
+    if (dbConnected !== 'true') {
+      setError("Please connect to the database before sending messages.");
+      return;
+    }
+
     setLoading(true);
+    setError(null); // Clear previous error message
+
     const userMessage: Message = {
       type: "user",
       content: userInput,
@@ -29,22 +40,19 @@ const App = () => {
   };
 
   useEffect(() => {
-    // גלילה לתחילת ההודעה האחרונה
     if (lastMessageRef.current && chatHistoryRef.current) {
       const chatContainer = chatHistoryRef.current;
       const lastMessageElement = lastMessageRef.current;
 
-      // חישוב מיקום ההודעה האחרונה
       const topPosition = lastMessageElement.offsetTop;
       const containerHeight = chatContainer.clientHeight;
 
-      // גלילה לתחילת ההודעה האחרונה
       chatContainer.scrollTo({
         top: topPosition - (containerHeight / 2),
         behavior: 'smooth',
       });
     }
-  }, [messages]); // התגובה תתרחש כל פעם שיתווספו הודעות חדשות
+  }, [messages]);
 
   return (
     <div className="container clearfix">
@@ -56,10 +64,10 @@ const App = () => {
           <ul>
             {messages.map((msg, index) => (
               <div
-                className="clearfix"
-                key={index}
-                ref={index === messages.length - 1 ? lastMessageRef : null} // הגדרת הפנייה להודעה האחרונה
-              >
+              className="clearfix"
+              key={index}
+                ref={index === messages.length - 1 ? lastMessageRef : null}
+                >
                 <div
                   className={`message-data align-${
                     msg.type === "user" ? "right" : "left"
@@ -79,8 +87,8 @@ const App = () => {
                 <div
                   className={`message ${
                     msg.type === "user"
-                      ? "other-message float-right"
-                      : "my-message float-left"
+                    ? "other-message float-right"
+                    : "my-message float-left"
                   }`}
                 >
                   {msg.content}
@@ -92,6 +100,7 @@ const App = () => {
                 </div>
               </div>
             ))}
+            {error && <h3 className="error">{error}</h3>}
           </ul>
         </div>
         <div className="chat-message clearfix">

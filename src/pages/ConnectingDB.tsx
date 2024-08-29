@@ -20,7 +20,8 @@ const ConnectingDB = () => {
     try {
       setLoading(true);
       setError("");
-      setResult(null)
+      setResult(null);
+  
       const token = getToken();
       const response = await serverApi.post(
         "http://localhost:8080/connect-db",
@@ -36,15 +37,22 @@ const ConnectingDB = () => {
           },
         }
       );
-      setResult(response.data);
+  
+      if (response.status === 200) {
+        localStorage.setItem('dbConnected', 'true');
+        navigate('/');
+      } else {
+        setError("Error connecting to the database. Please try again.");
+      }
+  
       setLoading(false);
-      // navigate("/");
     } catch (error: any) {
       console.error("Error connecting to the database:", error);
-      setError("Error connecting to the database. Please try again."); // Display error message
+      setError("Error connecting to the database. Please try again.");
       setLoading(false);
     }
   };
+  
 
   return (
     <div className="align">
