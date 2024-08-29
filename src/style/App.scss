@@ -142,20 +142,24 @@ body {
       margin-bottom: 30px;
       width: 90%;
       position: relative;
-
-      &:after {
-        bottom: 100%;
-        left: 7%;
-        border: solid transparent;
-        content: " ";
-        height: 0;
-        width: 0;
-        position: absolute;
-        pointer-events: none;
-        border-bottom-color: $green;
-        border-width: 10px;
-        margin-left: -10px;
-      }
+      word-wrap: break-word;
+      white-space: pre-wrap;
+    
+    
+    &:after {
+      bottom: 100%;
+      left: 7%;
+      border: solid transparent;
+      content: " ";
+      height: auto;
+      width: auto;
+      position: absolute;
+      pointer-events: none;
+      border-bottom-color: $green;
+      border-width: 10px;
+      margin-left: -10px;
+    }
+    
 
       &.my-message {
         background: $green;
