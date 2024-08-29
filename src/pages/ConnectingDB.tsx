@@ -1,58 +1,35 @@
 import { useState } from "react";
 import Logo from "../assets/svg/Logo";
 import "../style/ConnectingDB.scss";
-import { getToken } from "../Service/authService";
 import { useNavigate } from "react-router-dom";
-import { serverApi } from "../Service/api";
+import { connectToDatabase } from "../Service/authService";
 
 const ConnectingDB = () => {
-  const [username, setUsername] = useState("");
-  const [url, setUrl] = useState("");
-  const [password, setPassword] = useState("");
-  const [result, setResult] = useState(null);
-  const [error, setError] = useState(""); // State for error messages
+  const [username, setUsername] = useState<string>("");
+  const [url, setUrl] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [result, setResult] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    try {
-      setLoading(true);
-      setError("");
-      setResult(null);
-  
-      const token = getToken();
-      const response = await serverApi.post(
-        "http://localhost:8080/connect-db",
-        {
-          url: url,
-          username: username,
-          password: password,
-        },
-        {
-          headers: {
-            Authorization: token ? `Bearer ${token}` : "",
-            "Content-Type": "application/json",
-          },
-        }
-      );
-  
-      if (response.status === 200) {
-        localStorage.setItem('dbConnected', 'true');
-        navigate('/');
-      } else {
-        setError("Error connecting to the database. Please try again.");
-      }
-  
-      setLoading(false);
-    } catch (error: any) {
-      console.error("Error connecting to the database:", error);
-      setError("Error connecting to the database. Please try again.");
-      setLoading(false);
+
+    const success = await connectToDatabase(
+      url,
+      username,
+      password,
+      setResult,
+      setError,
+      setLoading
+    );
+
+    if (success) {
+      navigate("/");
     }
   };
-  
 
   return (
     <div className="align">

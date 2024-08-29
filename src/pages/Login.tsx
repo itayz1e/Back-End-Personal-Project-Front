@@ -2,7 +2,12 @@ import { Link, useNavigate } from "react-router-dom";
 import "../style/Login.scss";
 import Logo from "../assets/svg/Logo";
 import { useState } from "react";
-import { isTokenValid, login, logout, setTokenWithExpiry } from "../Service/authService";
+import {
+  isTokenValid,
+  login,
+  logout,
+  setTokenWithExpiry,
+} from "../Service/authService";
 import { LoginRequest } from "../Service/interface";
 
 const Login = () => {
@@ -23,9 +28,8 @@ const Login = () => {
       setTokenWithExpiry(token, 86400000);
 
       if (isTokenValid()) {
-
-        const dbConnected = localStorage.getItem('dbConnected');
-        if (dbConnected === 'true') {
+        const dbConnected = localStorage.getItem("dbConnected");
+        if (dbConnected === "true") {
           navigate("/");
         } else {
           navigate("/ConnectingDB");

@@ -1,5 +1,5 @@
 import { serverApi } from "./api";
-import { LoginRequest, RegisterRequest } from "./interface";
+import { LoginRequest, Message, RegisterRequest } from "./interface";
 
 
 
@@ -30,12 +30,6 @@ export const register = async (data: RegisterRequest) => {
     throw error;
   }
 };
-
-export interface Message {
-  type: "user" | "chatgpt";
-  content: string;
-  timestamp: string;
-}
 
 export const askChatGPT = async (
   userInput: string,
@@ -68,7 +62,7 @@ export const askChatGPT = async (
   } catch (error: any) {
     console.error("Error fetching data:", error);
   } finally {
-    setLoading(false); // בצע עדכון לסטטוס טעינה גם במקרה של שגיאה
+    setLoading(false);
   }
 };
 
@@ -110,44 +104,53 @@ export const logout = () => {
   localStorage.removeItem("user");
 };
 
+
+
 export const connectToDatabase = async (
   url: string,
   username: string,
   password: string,
-  token: string
+  setResult: React.Dispatch<React.SetStateAction<string | null>>,
+  setError: React.Dispatch<React.SetStateAction<string | null>>,
+  setLoading: React.Dispatch<React.SetStateAction<boolean>>
 ) => {
   try {
+    setLoading(true);
+    setError(null);
+    setResult(null);
+
+    const token = getToken();
     const response = await serverApi.post(
-      "http://localhost:8080/api/connect-db",
+      "http://localhost:8080/connect-db",
       {
-        url,
-        username,
-        password,
+        url: url,
+        username: username,
+        password: password,
       },
       {
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: token ? `Bearer ${token}` : "",
+          "Content-Type": "application/json",
         },
       }
     );
 
-    const dbToken = response.data.token;
-
-    if (dbToken) {
-      const expiryDate = new Date();
-      expiryDate.setDate(expiryDate.getDate() + 3);
-      const tokenData = {
-        token: dbToken,
-        expiry: expiryDate.toISOString(),
-      };
-
-      localStorage.setItem("dbToken", JSON.stringify(tokenData));
+    if (response.status === 200) {
+      localStorage.setItem('dbConnected', 'true');
+      return true;
+    } else {
+      setError("Error connecting to the database. Please try again.");
+      return false;
     }
-    return response;
-  } catch (error) {
-    throw new Error(`Error connecting to database`);
+  } catch (error: any) {
+    console.error("Error connecting to the database:", error);
+    setError("Error connecting to the database. Please try again.");
+    return false;
+  } finally {
+    setLoading(false);
   }
 };
+
 
 export const isTokenValid = (): boolean => {
   const tokenData = localStorage.getItem("user");

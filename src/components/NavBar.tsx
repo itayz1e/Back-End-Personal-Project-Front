@@ -1,11 +1,8 @@
-import { Link } from 'react-router-dom';
-import '../style/NavBar.scss';
-
-import { logout, isAuthenticated } from '../Service/authService';
+import { Link } from "react-router-dom";
+import "../style/NavBar.scss";
+import { logout } from "../Service/authService";
 
 function NavBar() {
-  //  const setLoggedIn = isAuthenticated();
-
   return (
     <nav className="navbar">
       <ul>
@@ -16,11 +13,9 @@ function NavBar() {
           <Link to="/ConnectingDB">ConnectingDB</Link>
         </li>
         <li>
-          {/* {setLoggedIn ? ( */}
-            <Link onClick={logout} to="/login">Logout</Link>
-          {/* ) : ( */}
-            {/* <Link to="/login">Login</Link> */}
-          {/* )} */}
+          <Link onClick={logout} to="/login">
+            Logout
+          </Link>
         </li>
       </ul>
     </nav>

@@ -2,7 +2,7 @@ import { useState } from "react";
 import Logo from "../assets/svg/Logo";
 import "../style/Register.scss";
 import { register } from "../Service/authService";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { RegisterRequest } from "../Service/interface";
 
 const Register = () => {
@@ -15,7 +15,7 @@ const Register = () => {
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    
+
     const requestData: RegisterRequest = {
       username,
       email,
@@ -24,9 +24,9 @@ const Register = () => {
 
     try {
       await register(requestData);
-      navigate('/login');
+      navigate("/login");
     } catch (err: any) {
-      setErrorMessage('Username or email already exists');
+      setErrorMessage("Username or email already exists");
     }
   };
 
@@ -76,7 +76,7 @@ const Register = () => {
           </form>
           {errorMessage && <h3 className="error">{errorMessage}</h3>}
           <p>
-            Already have an account? <a href="/login">Sign in</a>
+            Already have an account? <Link to={"/login"}>Sign in</Link>
           </p>
         </div>
       </div>

@@ -2,33 +2,25 @@ import { useState, useEffect, useRef } from "react";
 import "../style/App.scss";
 import Logo from "../assets/svg/Logo";
 import { askChatGPT } from "../Service/authService";
-
-interface Message {
-  type: "user" | "chatgpt";
-  content: string;
-  timestamp: string;
-}
+import { Message } from "../Service/interface";
 
 const App = () => {
-  const [userInput, setUserInput] = useState("");
+  const [userInput, setUserInput] = useState<string>("");
   const [messages, setMessages] = useState<Message[]>([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const chatHistoryRef = useRef<HTMLDivElement>(null);
   const lastMessageRef = useRef<HTMLDivElement>(null);
 
   const handleSubmit = async () => {
+    const dbConnected = localStorage.getItem("dbConnected");
 
-    const dbConnected = localStorage.getItem('dbConnected');
-    
-    if (dbConnected !== 'true') {
+    if (dbConnected !== "true") {
       setError("Please connect to the database before sending messages.");
       return;
     }
-
     setLoading(true);
-    setError(null); // Clear previous error message
-
+    setError(null);
     const userMessage: Message = {
       type: "user",
       content: userInput,
@@ -48,8 +40,8 @@ const App = () => {
       const containerHeight = chatContainer.clientHeight;
 
       chatContainer.scrollTo({
-        top: topPosition - (containerHeight / 2),
-        behavior: 'smooth',
+        top: topPosition - containerHeight / 2,
+        behavior: "smooth",
       });
     }
   }, [messages]);
@@ -64,10 +56,10 @@ const App = () => {
           <ul>
             {messages.map((msg, index) => (
               <div
-              className="clearfix"
-              key={index}
+                className="clearfix"
+                key={index}
                 ref={index === messages.length - 1 ? lastMessageRef : null}
-                >
+              >
                 <div
                   className={`message-data align-${
                     msg.type === "user" ? "right" : "left"
@@ -87,8 +79,8 @@ const App = () => {
                 <div
                   className={`message ${
                     msg.type === "user"
-                    ? "other-message float-right"
-                    : "my-message float-left"
+                      ? "other-message float-right"
+                      : "my-message float-left"
                   }`}
                 >
                   {msg.content}
