@@ -66,6 +66,15 @@ export const askChatGPT = async (
   }
 };
 
+export const setDbConnectedWithExpiry = (expiry: number) => {
+  const now = new Date();
+  const item = { 
+    connected: true, 
+    expiry: now.getTime() + expiry 
+  };
+  localStorage.setItem("dbConnected", 'true');
+};
+
 
 
 export const setTokenWithExpiry = (token: string, expiry: number) => {
@@ -136,7 +145,7 @@ export const connectToDatabase = async (
     );
 
     if (response.status === 200) {
-      localStorage.setItem('dbConnected', 'true');
+      setDbConnectedWithExpiry(86400000);
       return true;
     } else {
       setError("Error connecting to the database. Please try again.");
