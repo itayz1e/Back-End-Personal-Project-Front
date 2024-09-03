@@ -31,6 +31,15 @@ const App = () => {
     setUserInput("");
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      if (!loading && userInput.trim() !== "") {
+        handleSubmit();
+      }
+    }
+  };
+
   useEffect(() => {
     if (lastMessageRef.current && chatHistoryRef.current) {
       const chatContainer = chatHistoryRef.current;
@@ -102,6 +111,7 @@ const App = () => {
             placeholder="Type your message"
             value={userInput}
             onChange={(e) => setUserInput(e.target.value)}
+            onKeyDown={handleKeyDown}
           ></textarea>
           <button onClick={handleSubmit} disabled={loading}>
             {loading ? "Sending..." : "Send"}
