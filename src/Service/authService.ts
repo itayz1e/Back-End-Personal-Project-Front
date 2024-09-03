@@ -73,6 +73,7 @@ export const setDbConnectedWithExpiry = (expiry: number) => {
     expiry: now.getTime() + expiry 
   };
   localStorage.setItem("dbConnected", 'true');
+  return item;
 };
 
 
