@@ -1,11 +1,12 @@
 import { serverApi } from "./api";
 import { LoginRequest, Message, RegisterRequest } from "./interface";
 
-
-
 export const login = async (data: LoginRequest): Promise<string> => {
   try {
-    const response = await serverApi.post("http://localhost:8080/api/login", data);
+    const response = await serverApi.post(
+      "http://localhost:8080/api/login",
+      data
+    );
     const { token } = response.data;
     return token;
   } catch (error: any) {
@@ -58,7 +59,6 @@ export const askChatGPT = async (
       timestamp: new Date().toLocaleTimeString(),
     };
     setMessages((prevMessages) => [...prevMessages, chatGPTMessage]);
-
   } catch (error: any) {
     console.error("Error fetching data:", error);
   } finally {
@@ -68,15 +68,13 @@ export const askChatGPT = async (
 
 export const setDbConnectedWithExpiry = (expiry: number) => {
   const now = new Date();
-  const item = { 
-    connected: true, 
-    expiry: now.getTime() + expiry 
+  const item = {
+    connected: true,
+    expiry: now.getTime() + expiry,
   };
-  localStorage.setItem("dbConnected", 'true');
+  localStorage.setItem("dbConnected", "true");
   return item;
 };
-
-
 
 export const setTokenWithExpiry = (token: string, expiry: number) => {
   const now = new Date();
@@ -109,12 +107,9 @@ export const getToken = () => {
   return null;
 };
 
-
 export const logout = () => {
   localStorage.removeItem("user");
 };
-
-
 
 export const connectToDatabase = async (
   url: string,
@@ -160,7 +155,6 @@ export const connectToDatabase = async (
     setLoading(false);
   }
 };
-
 
 export const isTokenValid = (): boolean => {
   const tokenData = localStorage.getItem("user");
