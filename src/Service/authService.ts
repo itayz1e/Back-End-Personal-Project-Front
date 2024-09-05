@@ -4,7 +4,7 @@ import { LoginRequest, Message, RegisterRequest } from "./interface";
 export const login = async (data: LoginRequest): Promise<string> => {
   try {
     const response = await serverApi.post(
-      "http://localhost:8080/api/login",
+      "/api/login",
       data
     );
     const { token } = response.data;
@@ -20,7 +20,7 @@ export const login = async (data: LoginRequest): Promise<string> => {
 export const register = async (data: RegisterRequest) => {
   try {
     const response = await serverApi.post(
-      "http://localhost:8080/api/register",
+      "/api/register",
       data
     );
     return response.data;
@@ -44,7 +44,7 @@ export const askChatGPT = async (
     }
 
     const response = await serverApi.get(
-      "http://localhost:8080/Ask/askChatGPT",
+      "/Ask/askChatGPT",
       {
         params: { userInput },
         headers: {
@@ -126,7 +126,7 @@ export const connectToDatabase = async (
 
     const token = getToken();
     const response = await serverApi.post(
-      "http://localhost:8080/connect-db",
+      "/connect-db",
       {
         url: url,
         username: username,
