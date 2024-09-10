@@ -27,7 +27,11 @@ const Login = () => {
       const token = await login(requestData);
       setTokenWithExpiry(token, 86400000);
 
-      if (isTokenValid()) {
+      if (!token){
+        setErrorMessage("User not found Please try again.");
+      }
+
+      if (isTokenValid() && token) {
         const dbConnected = localStorage.getItem("dbConnected");
         if (dbConnected === "true") {
           navigate("/");

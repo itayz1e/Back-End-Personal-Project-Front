@@ -256,18 +256,17 @@ body {
 
 @media only screen and (max-width: 768px) {
   .container {
-    margin: 0 auto;
+    margin: 12px auto;
     max-width: 100%;
     padding: 15px;
     background: #444753;
     border-radius: 5px;
-    height: 9rem !important;
   }
 
   .chat-history {
     padding: 10px 50px 0px 10px;
     border-bottom: 2px solid white;
     overflow-y: scroll;
-    height: 27rem !important;
+    height: 20rem !important;
   }
 }
